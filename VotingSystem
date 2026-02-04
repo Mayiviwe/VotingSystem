@@ -1,0 +1,95 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class VotingSystem extends JFrame implements ActionListener {
+    private JTextField nameField, phoneField, idField;
+    private JRadioButton genZ, millennials, genAlpha;
+    private JButton submitButton, resultsButton;
+    private ButtonGroup partyGroup;
+
+    private int g1 = 0, g2 = 0, g3 = 0;
+
+    public VotingSystem() {
+        setTitle("Online Voting System");
+        setSize(550, 320);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(9, 1));
+
+        // Input Fields
+        nameField = new JTextField();
+        phoneField = new JTextField();
+        idField = new JTextField();
+
+        add(new JLabel("Enter your Name:"));
+        add(nameField);
+        add(new JLabel("Enter your Phone Number:"));
+        add(phoneField);
+        add(new JLabel("Enter your ID Number:"));
+        add(idField);
+
+        // Radio Buttons
+        genZ = new JRadioButton("Generation Z");
+        millennials = new JRadioButton("Millennials");
+        genAlpha = new JRadioButton("Generation Alpha");
+
+        partyGroup = new ButtonGroup();
+        partyGroup.add(genZ);
+        partyGroup.add(millennials);
+        partyGroup.add(genAlpha);
+
+        add(genZ);
+        add(millennials);
+        add(genAlpha);
+
+        // Buttons
+        submitButton = new JButton("Submit Your Vote");
+        resultsButton = new JButton("Check Results");
+
+        submitButton.addActionListener(this);
+        resultsButton.addActionListener(this);
+
+        add(submitButton);
+        add(resultsButton);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == submitButton) {
+            if (!genZ.isSelected() && !millennials.isSelected() && !genAlpha.isSelected()) {
+                JOptionPane.showMessageDialog(this, "Select a Party", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (genZ.isSelected()) g1++;
+            else if (millennials.isSelected()) g2++;
+            else if (genAlpha.isSelected()) g3++;
+
+            JOptionPane.showMessageDialog(this, "Vote Submitted Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            partyGroup.clearSelection();
+            nameField.setText("");
+            phoneField.setText("");
+            idField.setText("");
+        }
+
+        if (e.getSource() == resultsButton) {
+            String winner;
+            if (g1 > g2 && g1 > g3) winner = "Generation Z";
+            else if (g2 > g1 && g2 > g3) winner = "Millennials";
+            else if (g3 > g1 && g3 > g2) winner = "Generation Alpha";
+            else winner = "It's a tie!";
+
+            String result = String.format(
+                    "Results:\nGeneration Z: %d votes\nMillennials: %d votes\nGeneration Alpha: %d votes\n\nWinner: %s",
+                    g1, g2, g3, winner
+            );
+
+            JOptionPane.showMessageDialog(this, result, "Voting Results", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new VotingSystem().setVisible(true));
+    }
+}
